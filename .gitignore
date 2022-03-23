@@ -1,0 +1,5 @@
+manual-connections
+pia.env
+transmission.env
+volumes/**
+scripts/.cache/**

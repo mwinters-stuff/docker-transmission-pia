@@ -1,0 +1,27 @@
+version: "2.1"
+services:
+  transmission:
+    build:
+      context: ./
+    container_name: docker-transmission-wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    env_file: transmission.env
+    privileged: true
+    # user: 
+    #   1000:1000
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.default.disable_ipv6=1
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.lo.disable_ipv6=1
+    volumes:
+      - ./volumes/config:/config
+      - ./volumes/downloads:/downloads
+      - ./volumes/mnt:/mnt
+      - ./scripts:/scripts
