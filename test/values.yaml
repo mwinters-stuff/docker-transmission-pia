@@ -1,0 +1,197 @@
+#
+# IMPORTANT NOTE
+#
+# This chart inherits from our common library chart. You can check the default values/options here:
+# https://github.com/k8s-at-home/library-charts/tree/main/charts/stable/common/values.yaml
+#
+
+# -- Use an initContainer to download the Flood web ui
+# Set UI with env `TRANSMISSION_WEB_HOME` set to `/config/flood-for-transmission/`
+# @default -- See values.yaml
+initContainers: {}
+  # custom-webui:
+  #   name: custom-webui
+  #   image: curlimages/curl:7.76.1
+  #   command:
+  #   - "/bin/sh"
+  #   - "-c"
+  #   - "curl -o- -sL https://github.com/johman10/flood-for-transmission/releases/download/latest/flood-for-transmission.tar.gz | tar xzf - -C /config"
+  #   volumeMounts:
+  #   - name: config
+  #     mountPath: /config
+  #   securityContext:
+  #     runAsUser: 568
+  #     runAsGroup: 568
+
+image:
+  # -- image repository
+  repository: harbor.local.winters.nz/library/transmission-mnamer
+  # -- image tag
+  tag: latest
+  # -- image pull policy
+  pullPolicy: IfNotPresent
+
+# -- environment variables. See [image docs](https://github.com/k8s-at-home/container-images/tree/main/apps/transmission/settings.json.tmpl) for more details.
+# @default -- See below
+env:
+  # -- Set the container timezone
+  TZ: Pacific/Auckland
+  # -- Path in container where the Web UI is located
+  TRANSMISSION_WEB_HOME: /web
+  # -- Password to access the Web UI
+  TRANSMISSION_RPC_PASSWORD: ""
+  # -- Torrent download directory
+  TRANSMISSION_DOWNLOAD_DIR: /downloads/complete
+  # -- Enable incomplete download directory
+  TRANSMISSION_INCOMPLETE_DIR_ENABLED: true
+  # -- Incomplete download directory
+  TRANSMISSION_INCOMPLETE_DIR: /downloads/incomplete
+  # -- Enable watch directory
+  TRANSMISSION_WATCH_DIR_ENABLED: false
+  # -- Watch directory
+  TRANSMISSION_WATCH_DIR: /watch
+
+  TRANSMISSION_SCRIPT_TORRENT_DONE_ENABLED: true
+  TRANSMISSION_SCRIPT_TORRENT_DONE_FILENAME: /scripts/torrent-done.sh
+
+# -- Configures service settings for the chart.
+# @default -- See values.yaml
+service:
+  main:
+    type: ClusterIP
+    ports:
+      http:
+        port: 9091
+  utptcp:
+    enabled: false
+    type: ClusterIP
+    ports:
+      utptcp:
+        enabled: true
+        port: 51413
+        protocol: TCP
+        targetPort: 51413
+  utpudp:
+    enabled: false
+    type: ClusterIP
+    ports:
+      utpudp:
+        enabled: true
+        port: 51413
+        protocol: UDP
+        targetPort: 51413
+
+# -- Configures the probes for the main Pod.
+# @default -- See values.yaml
+## transmission runs the GUI and I/O on the same thread.
+## Heavy bandwith usage may stall the UI and result in restarts.
+probes:
+  liveness:
+    spec:
+      timeoutSeconds: 30
+  readiness:
+    spec:
+      timeoutSeconds: 30
+
+ingress:
+  # -- Enable and configure ingress settings for the chart under this key.
+  # @default -- See values.yaml
+  main:
+    enabled: false
+
+# -- Configure persistence settings for the chart under this key.
+# @default -- See values.yaml
+persistence:
+  config:
+    enabled: false
+    mountPath: /config
+
+  downloads:
+    enabled: false
+    mountPath: /downloads
+
+  watch:
+    enabled: false
+    mountPath: /watch
+
+  scripts:
+    enabled: true
+    mountPath: /scripts
+    type: hostPath
+    hostPath: ./scripts
+
+  media-tv:
+    enabled: true
+    mountPath: /mnt/TV
+    type: hostPath
+    hostPath: ./mnt/TV
+
+  media-movies:
+    enabled: true
+    mountPath: /mnt/Movies
+    type: hostPath
+    hostPath: ./mnt/Movies
+
+addons:
+  vpn:
+    enabled: true
+
+    wireguard:
+      # -- Specify the WireGuard image
+      repository: harbor.local.winters.nz/library/wireguard-pia
+      # -- Specify the WireGuard image tag
+      tag: latest
+    # This Should be set to `wireguard`. This will set the add-on to use the default settings for Wireguard based connections.
+    type: wireguard
+
+    # If the podSecurityContext is set to run as a different user, make sure to run the Wireguard container as UID/GID 568.
+    # This is required for it to be able to read certain configuration files.
+    securityContext:
+      runAsUser: 568
+      runAsGroup: 568
+
+    env:
+      # Enable a killswitch that kills all trafic when the VPN is not connected
+      KILLSWITCH: "true"
+      VPN_PROTOCOL: "wireguard"
+      PIA_USER: "p7573188"
+      PIA_PASS: "Cessna172!"
+      PIA_DNS: "true"
+      DISABLE_IPV6: "yes"
+      #AUTOCONNECT: "true"
+      PREFERRED_REGION: "us_silicon_valley"
+      #PIA_PF: "false"
+      MAX_LATENCY: "1"
+
+    # The wireguard configuration file provided by your VPN provider goes here.
+    #
+    # Set AllowedIPs to 0.0.0.0/0 to route all traffic through the VPN.
+    #
+    # Pay close attention to the PostUp and PreDown lines. They must be added if you wish to run a script when the connection
+    # is opened / closed.
+    # configFile: |-
+    #   [Interface]
+    #   PrivateKey = <my-private-key>
+    #   Address = <interface address>
+    #   DNS = <interface DNS server>
+    #   PostUp = /config/up.sh %i
+    #   PreDown = /config/down.sh %i
+
+    #   [Peer]
+    #   PublicKey = <my-public-key>
+    #   AllowedIPs = 0.0.0.0/0
+    #   Endpoint = <peer endpoint>
+
+    # The scripts that get run when the VPN connection opens/closes are defined here.
+    # The default scripts will write a string to represent the current connection state to a file.
+    # Our qBittorrent image has a feature that can wait for this file to contain the word 'connected' before actually starting the application.
+    scripts:
+      up: |-
+        #!/bin/bash
+        echo "connected" > /shared/vpnstatus
+        cd /manual-connections && ./run_setup.sh
+
+      down: |-
+        #!/bin/bash
+        echo "disconnected" > /shared/vpnstatus
+        wg-quick down pia

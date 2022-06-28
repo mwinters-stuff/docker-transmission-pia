@@ -7,5 +7,6 @@ RUN wget https://github.com/pia-foss/manual-connections/archive/refs/heads/maste
 
 ADD patch.sh .
 RUN ./patch.sh
-WORKDIR /manual-connections
+RUN mv entrypoint.sh entrypoint-original.sh
+ADD entrypoint.sh .
 USER kah
