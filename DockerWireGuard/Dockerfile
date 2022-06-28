@@ -9,4 +9,5 @@ ADD patch.sh .
 RUN ./patch.sh
 RUN mv entrypoint.sh entrypoint-original.sh
 ADD entrypoint.sh .
-USER kah
+USER root
+ENTRYPOINT [ "/entrypoint.sh" ]

@@ -22,17 +22,17 @@ trap _shutdown EXIT
 
 source "/shim/iptables-backend.sh"
 
-CONFIGS=$(sudo /usr/bin/find /etc/wireguard -type f -printf "%f\n")
-if [[ -z "${CONFIGS}" ]]; then
-    echo "[ERROR] No configuration files found in /etc/wireguard" >&2
-    exit 1
-fi
+# CONFIGS=$(sudo /usr/bin/find /etc/wireguard -type f -printf "%f\n")
+# if [[ -z "${CONFIGS}" ]]; then
+#     echo "[ERROR] No configuration files found in /etc/wireguard" >&2
+#     exit 1
+# fi
 
-CONFIG=$(echo $CONFIGS | head -n 1)
-INTERFACE="${CONFIG%.*}"
+# CONFIG=$(echo $CONFIGS | head -n 1)
+# INTERFACE="${CONFIG%.*}"
 
 cd /manual-connections || exit 1
-sudo ./run_setup.sh
+./run_setup.sh
 
 # sudo /usr/bin/wg-quick up "${INTERFACE}"
 INTERFACE_UP=true
