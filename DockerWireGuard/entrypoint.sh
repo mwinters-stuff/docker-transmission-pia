@@ -23,7 +23,6 @@ trap _shutdown EXIT
 source "/shim/iptables-backend.sh"
 
 export VPN_PROTOCOL=wireguard
-export AUTOCONNECT=true
 export PIA_PF=false
 
 cd /manual-connections || exit 1
