@@ -27,7 +27,7 @@ export AUTOCONNECT=true
 export PIA_PF=false
 
 cd /manual-connections || exit 1
-sudo ./run_setup.sh
+sudo -E ./run_setup.sh
 
 # sudo /usr/bin/wg-quick up "${INTERFACE}"
 INTERFACE_UP=true
