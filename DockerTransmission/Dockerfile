@@ -6,7 +6,8 @@ RUN apt-get -qq update && \
     ca-certificates \
     curl \
     jq \
-    python3-pip 
+    python3-pip \
+    traceroute
     
 
 RUN \
