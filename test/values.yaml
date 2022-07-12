@@ -154,7 +154,7 @@ addons:
 
     env:
       # Enable a killswitch that kills all trafic when the VPN is not connected
-      KILLSWITCH: "true"
+      KILLSWITCH: "false"
       VPN_PROTOCOL: "wireguard"
       PIA_USER: "p7573188"
       PIA_PASS: "Cessna172!"
