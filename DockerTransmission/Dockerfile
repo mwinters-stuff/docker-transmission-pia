@@ -11,7 +11,8 @@ RUN apt-get -qq update && \
     
 
 RUN \
-  pip install https://github.com/mwinters-stuff/mnamer/archive/refs/heads/master.zip
+  pip install https://github.com/mwinters-stuff/mnamer/archive/refs/heads/master.zip && \
+  pip install xq
 
 RUN \  
   echo "**** cleanup ****" && \
