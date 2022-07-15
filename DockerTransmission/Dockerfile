@@ -7,7 +7,8 @@ RUN apt-get -qq update && \
     curl \
     jq \
     python3-pip \
-    traceroute
+    traceroute \
+    transmission-cli
     
 
 RUN \
