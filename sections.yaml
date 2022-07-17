@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MediaContainer size="2" allowSync="0" title1="Plex Library">
+<Directory allowSync="1" art="/:/resources/movie-fanart.jpg" composite="/library/sections/2/composite/1656877733" filters="1" refreshing="0" thumb="/:/resources/movie.png" key="2" type="movie" title="Movies" agent="tv.plex.agents.movie" scanner="Plex Movie" language="en-US" uuid="075a684f-f5dc-4468-86d5-235a60fe7718" updatedAt="1656868084" createdAt="1656868084" scannedAt="1656877733" content="1" directory="1" contentChangedAt="4677" hidden="0">
+<Location id="2" path="/data/Movies" />
+</Directory>
+<Directory allowSync="1" art="/:/resources/show-fanart.jpg" composite="/library/sections/1/composite/1657525498" filters="1" refreshing="0" thumb="/:/resources/show.png" key="1" type="show" title="TV Shows" agent="tv.plex.agents.series" scanner="Plex TV Series" language="en-US" uuid="acd29c68-aff3-4c23-8b8d-46066fe06d30" updatedAt="1656868071" createdAt="1656868071" scannedAt="1657525498" content="1" directory="1" contentChangedAt="23028" hidden="0">
+<Location id="1" path="/data/TV" />
+</Directory>
+</MediaContainer>

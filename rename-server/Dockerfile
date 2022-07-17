@@ -14,6 +14,9 @@ RUN dart compile exe bin/server.dart -o bin/server
 # and the pre-built AOT-runtime in the `/runtime/` directory of the base image.
 FROM ubuntu:latest
 
+# COPY --from=build /runtime/ /
+COPY --from=build /app/bin/server /app/bin/
+
 RUN apt-get -qq update && \
     apt-get install -y \
     bash \
@@ -34,9 +37,6 @@ RUN \
     /tmp/* \
     /var/tmp/* \
     && apt-get clean
-
-COPY --from=build /runtime/ /
-COPY --from=build /app/bin/server /app/bin/
 
 # Start server.
 EXPOSE 8080

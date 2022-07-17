@@ -1,0 +1,110 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: vpn-gateway
+  namespace: apps
+  labels:
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://k8s-at-home.com/charts/
+      chart: pod-gateway
+      version: 2.0.0
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home
+        namespace: common
+      interval: 5m
+
+  # See https://github.com/k8s-at-home/charts/blob/master/charts/pod-gateway/values.yaml
+  values:
+    routed_namespaces:
+    - vpn
+    # settings:
+    #   VPN_LOCAL_CIDRS: "10.0.0.0/8 192.168.0.0/16"
+      # VPN_INTERFACE: pia
+    publicPorts: []
+
+    # addons:
+    #   vpn:
+    #     enabled: true
+
+    #     wireguard:
+    #       image:
+    #         # -- Specify the WireGuard image
+    #         repository: harbor.local.winters.nz/public/wireguard-pia
+    #         # -- Specify the WireGuard image tag
+    #         tag: latest
+    #         pullPolicy: Always
+    #     # This Should be set to `wireguard`. This will set the add-on to use the default settings for Wireguard based connections.
+    #     type: wireguard
+
+    #     # If the podSecurityContext is set to run as a different user, make sure to run the Wireguard container as UID/GID 568.
+    #     # This is required for it to be able to read certain configuration files.
+    #     # securityContext:
+    #     #   runAsUser: 568
+    #     #   runAsGroup: 568
+
+    #     networkPolicy:
+    #       enabled: true
+
+    #       egress:
+    #         - to:
+    #           - ipBlock:
+    #               cidr: 0.0.0.0/0
+    #           ports:
+    #           # VPN traffic port - change if your provider uses a different port
+    #           - port: 51820
+    #             protocol: UDP
+    #         - to:
+    #             # Allow traffic within K8S - change if your K8S cluster uses a different CIDR
+    #           - ipBlock:
+    #               cidr: 10.0.0.0/8
+
+    #     env:
+    #       # Enable a killswitch that kills all trafic when the VPN is not connected
+    #       KILLSWITCH: "false"
+    #       VPN_PROTOCOL: "wireguard"
+    #       PIA_USER: "p7573188"
+    #       PIA_PASS: "Cessna172!"
+    #       PIA_DNS: "true"
+    #       DISABLE_IPV6: "yes"
+    #       #AUTOCONNECT: "true"
+    #       # PREFERRED_REGION: "us_silicon_valley"
+    #       PREFERRED_REGION: "nz"
+    #       PIA_PF: "false"
+    #       # MAX_LATENCY: "1"
+    #       # VPN_LOCAL_CIDRS: "10.0.0.0/8 192.168.0.0/16"
+
+    #     # The wireguard configuration file provided by your VPN provider goes here.
+    #     #
+    #     # Set AllowedIPs to 0.0.0.0/0 to route all traffic through the VPN.
+    #     #
+    #     # Pay close attention to the PostUp and PreDown lines. They must be added if you wish to run a script when the connection
+    #     # is opened / closed.
+    #     configFile: |-
+    #       [Interface]
+    #       # PrivateKey = <my-private-key>
+    #       # Address = <interface address>
+    #       # DNS = <interface DNS server>
+    #       # PostUp = /config/up.sh %i
+    #       # PreDown = /config/down.sh %i
+
+    #       [Peer]
+    #       # PublicKey = <my-public-key>
+    #       # AllowedIPs = 0.0.0.0/0
+    #       # Endpoint = <peer endpoint>
+
+    #     # The scripts that get run when the VPN connection opens/closes are defined here.
+    #     # The default scripts will write a string to represent the current connection state to a file.
+    #     # Our qBittorrent image has a feature that can wait for this file to contain the word 'connected' before actually starting the application.
+    #     scripts:
+    #       up: |-
+    #         #!/bin/bash
+    #         echo "connected" > /shared/vpnstatus
+
+    #       down: |-
+    #         #!/bin/bash
+    #         echo "disconnected" > /shared/vpnstatus
