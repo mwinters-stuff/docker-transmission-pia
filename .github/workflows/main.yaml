@@ -42,10 +42,10 @@ jobs:
         platforms: linux/amd64
         push: true
         tags: |
-          harbor.local.winters.nz/library/transmission:latest
-          harbor.local.winters.nz/library/transmission:${{steps.version.outputs.new_version}}
           harbor.local.winters.nz/public/transmission:latest
           harbor.local.winters.nz/public/transmission:${{steps.version.outputs.new_version}}
+          # harbor.local.winters.nz/library/transmission:latest
+          # harbor.local.winters.nz/library/transmission:${{steps.version.outputs.new_version}}
 
     - name: Build and push WireGuard
       uses: docker/build-push-action@v2
@@ -55,10 +55,10 @@ jobs:
         platforms: linux/amd64
         push: true
         tags: |
-          harbor.local.winters.nz/library/wireguard-pia:latest
-          harbor.local.winters.nz/library/wireguard-pia:${{steps.version.outputs.new_version}}
           harbor.local.winters.nz/public/wireguard-pia:latest
           harbor.local.winters.nz/public/wireguard-pia:${{steps.version.outputs.new_version}}
+          # harbor.local.winters.nz/library/wireguard-pia:latest
+          # harbor.local.winters.nz/library/wireguard-pia:${{steps.version.outputs.new_version}}
 
     - name: Build and push renamer
       uses: docker/build-push-action@v2
@@ -68,10 +68,10 @@ jobs:
         platforms: linux/amd64
         push: true
         tags: |
-          harbor.local.winters.nz/library/rename-server:latest
-          harbor.local.winters.nz/library/rename-server:${{steps.version.outputs.new_version}}
           harbor.local.winters.nz/public/rename-server:latest
           harbor.local.winters.nz/public/rename-server:${{steps.version.outputs.new_version}}
+          # harbor.local.winters.nz/library/rename-server:latest
+          # harbor.local.winters.nz/library/rename-server:${{steps.version.outputs.new_version}}
 
     - name: Chart version
       uses: mikefarah/yq@master
