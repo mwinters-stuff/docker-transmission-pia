@@ -4,5 +4,6 @@ RUN apt-get -qq update && \
     apt-get install -y \
     bash \
     traceroute \
+    curl \
     transmission-cli && apt-get clean
 USER kah
