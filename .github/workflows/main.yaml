@@ -72,3 +72,24 @@ jobs:
           harbor.local.winters.nz/library/rename-server:${{steps.version.outputs.new_version}}
           harbor.local.winters.nz/public/rename-server:latest
           harbor.local.winters.nz/public/rename-server:${{steps.version.outputs.new_version}}
+
+    - name: Chart version
+      uses: mikefarah/yq@master
+      with:
+        cmd: |
+          yq -i '.version = "${{steps.version.outputs.new_version}}" | .appVersion = "${{steps.version.outputs.new_version}}"' 'charts/rename-server/Chart.yaml'
+          yq -i '.image.tag = "${{steps.version.outputs.new_version}}"' 'charts/rename-server/values.yaml'
+
+    - name: Get helm dependancies
+      run: |
+          helm repo add k8s-at-home https://library-charts.k8s-at-home.com
+          helm dependency build charts/rename-server
+    
+    - name: Push Helm Chart to ChartMuseum
+      uses: bsord/helm-push@v4
+      with:
+        username: robot$github
+        password: ${{ secrets.HARBOR }}
+        registry-url: 'https://harbor.local.winters.nz/chartrepo/public'
+        force: true
+        chart-folder: charts/rename-server
