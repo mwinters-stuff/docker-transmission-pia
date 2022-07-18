@@ -22,15 +22,15 @@ RUN apt-get -qq update && \
     bash \
     ca-certificates \
     curl \
-    jq \
+    python3 \
+    python3-pkg-resources \
     python3-pip \
     traceroute 
 
 
 RUN \
-  pip install https://github.com/mwinters-stuff/mnamer/archive/refs/heads/master.zip && \
-  pip install xq
-
+  pip install https://github.com/mwinters-stuff/mnamer/archive/refs/heads/master.zip 
+RUN apt-get remove -y python3-pip && apt-get auto-remove -y
 RUN \  
   echo "**** cleanup ****" && \
   rm -rf \
