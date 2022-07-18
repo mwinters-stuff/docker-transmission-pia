@@ -3,3 +3,4 @@ pia.env
 transmission.env
 volumes/**
 scripts/.cache/**
+rename-server/.vscode/launch.json
