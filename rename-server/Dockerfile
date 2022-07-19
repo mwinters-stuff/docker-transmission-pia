@@ -18,21 +18,20 @@ FROM ubuntu:latest
 COPY --from=build /app/bin/server /app/bin/
 
 RUN apt-get -qq update && \
-    apt-get install -y \
-    bash \
-    ca-certificates \
-    curl \
-    python3 \
-    python3-pkg-resources \
-    python3-pip \
-    traceroute 
+    apt-get upgrade -y && \
+      apt-get install -y \
+      bash \
+      ca-certificates \
+      curl \
+      python3 \
+      python3-pkg-resources \
+      python3-pip \
+      traceroute 
 
 
-RUN \
-  pip install https://github.com/mwinters-stuff/mnamer/archive/refs/heads/master.zip 
+RUN pip install https://github.com/mwinters-stuff/mnamer/archive/refs/heads/master.zip 
 RUN apt-get remove -y python3-pip && apt-get auto-remove -y
-RUN \  
-  echo "**** cleanup ****" && \
+RUN echo "**** cleanup ****" && \
   rm -rf \
     /tmp/* \
     /var/tmp/* \
